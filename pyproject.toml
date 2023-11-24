@@ -13,10 +13,13 @@ uvicorn = "^0.24.0.post1"
 inject = "^5.2.0"
 pydantic-settings = "^2.1.0"
 uvloop = "^0.19.0"
+httpx = "^0.25.1"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
+asgi-lifespan = "^2.1.0"
 
 [build-system]
 requires = ["poetry-core"]
