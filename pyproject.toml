@@ -7,7 +7,16 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+fastapi = "^0.104.1"
+sqlalchemy = "^2.0.23"
+uvicorn = "^0.24.0.post1"
+inject = "^5.2.0"
+pydantic-settings = "^2.1.0"
+uvloop = "^0.19.0"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
 
 [build-system]
 requires = ["poetry-core"]
