@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 
+from app.api.v1.router import v1_router
 from app.config import config
 from app.dependency.ioc_container import init_provider
+
+
+def init_routers(app_: FastAPI):
+    app_.include_router(v1_router)
 
 
 def create_app() -> FastAPI:
@@ -14,6 +19,7 @@ def create_app() -> FastAPI:
     )
 
     init_provider()
+    init_routers(fastapi)
 
     print(f"\n💌💌💌FastAPI Config is '{config.ENV}'")
 

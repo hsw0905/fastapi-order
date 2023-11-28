@@ -6,11 +6,14 @@ import pytest_asyncio
 from asgi_lifespan import LifespanManager
 from fastapi import FastAPI
 from httpx import AsyncClient
+from pytest_factoryboy import register
+from sqlalchemy.orm import scoped_session
 from uvloop import Loop, new_event_loop
 
 from app import create_app
 from app.database.sqlalchemy import engine, session
 from core.persistence.models.base import Base
+from tests.seeder.conftest import MODEL_FACTORIES
 
 
 @pytest.fixture(scope="session")
@@ -53,7 +56,8 @@ def _is_local_db_used(database_url: str) -> None:
             os.unlink(database_url.split("sqlite:///")[-1])
 
 
-def test_session():
+@pytest.fixture()
+def test_session() -> Generator[scoped_session, None, None]:
     _is_local_db_used(str(engine.url))
 
     connection = engine.connect()
@@ -63,8 +67,25 @@ def test_session():
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
 
+    set_factories_session(session)
+
     yield session
 
     transaction.rollback()
     connection.close()
 
+
+def register_factories():
+    # 예시) register(StoreFactory) 이런 형태
+    for factory in MODEL_FACTORIES:
+        register(factory)
+
+
+register_factories()
+
+
+def set_factories_session(session):
+    # 예시) UserFactory._meta.sqlalchemy_session = session
+    for factory in MODEL_FACTORIES:
+        factory._meta.sqlalchemy_session = session
+        # factory._meta.sqlalchemy_session_persistence = 'flush'
