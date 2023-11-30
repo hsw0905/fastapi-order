@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from pytest_factoryboy import register
 from sqlalchemy.orm import scoped_session
+from starlette.testclient import TestClient
 from uvloop import Loop, new_event_loop
 
 from app import create_app
@@ -19,6 +20,12 @@ from tests.seeder.conftest import MODEL_FACTORIES
 @pytest.fixture(scope="session")
 def app() -> FastAPI:
     return create_app()
+
+
+@pytest.fixture(scope="session")
+def client(app) -> Generator[TestClient, None, None]:
+    with TestClient(app) as client:
+        yield client
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -88,4 +95,4 @@ def set_factories_session(session):
     # 예시) UserFactory._meta.sqlalchemy_session = session
     for factory in MODEL_FACTORIES:
         factory._meta.sqlalchemy_session = session
-        # factory._meta.sqlalchemy_session_persistence = 'flush'
+        factory._meta.sqlalchemy_session_persistence = 'flush'
